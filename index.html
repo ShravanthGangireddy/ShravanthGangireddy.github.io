@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>FocusGuard Pro — Zero-Latency Alarms & Drive Database</title>
+  <title>FocusGuard Pro — AI Gaze Proctor & Drive Database</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -64,7 +65,7 @@
             <h1 class="text-sm font-extrabold tracking-tight text-white truncate">FocusGuard Pro</h1>
             <span id="audioEngineBadge" class="px-1.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 text-[9px] font-bold uppercase shrink-0">Tap to Arm Audio</span>
           </div>
-          <p class="text-[10px] text-slate-400 truncate">Zero-Latency Alarms • Drive DB Ready</p>
+          <p class="text-[10px] text-slate-400 truncate">AI Gaze Proctor • Live Drive DB</p>
         </div>
       </div>
 
@@ -83,7 +84,7 @@
     <!-- Live Score & Drive Sync Strip -->
     <div class="shrink-0 px-4 py-1.5 bg-slate-950/80 border-b border-slate-800/70 flex items-center justify-between text-[11px]">
       <div class="flex items-center gap-2">
-        <span class="text-slate-400">Score: <strong id="headerFocusScore" class="text-emerald-400 font-extrabold">120 pts</strong></span>
+        <span class="text-slate-400">Score: <strong id="headerFocusScore" class="text-emerald-400 font-extrabold">0 pts</strong></span>
         <span class="text-slate-700">|</span>
         <span class="text-slate-400">Roasts: <strong id="headerRoastCount" class="text-rose-400 font-extrabold">0</strong></span>
       </div>
@@ -138,16 +139,16 @@
         </div>
       </div>
 
-      <!-- ==================== TAB 1: FOCUS & CAMERA PROCTOR ==================== -->
+      <!-- ==================== TAB 1: FOCUS & AI CAMERA PROCTOR ==================== -->
       <section id="focusTab" class="tab-panel space-y-3">
-        <!-- Mandatory Camera Proctor Card (Integrated with Latest Camera Permission & Live Feed Function) -->
+        <!-- Mandatory AI Exam Camera Proctor Card -->
         <div class="rounded-2xl bg-slate-950 border border-indigo-500/35 p-3 space-y-2.5">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
-              <h2 class="text-[11px] font-bold uppercase tracking-wider text-indigo-300">Mandatory Exam Camera Proctor</h2>
+          <div class="flex items-center justify-between gap-1.5">
+            <div class="flex items-center gap-1.5 min-w-0">
+              <span class="w-2 h-2 rounded-full bg-indigo-400 shrink-0"></span>
+              <h2 class="text-[11px] font-bold uppercase tracking-wider text-indigo-300 truncate">AI Exam Camera Proctor</h2>
             </div>
-            <span id="gazeStatusBadge" class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 text-[10px] font-semibold">Camera Off</span>
+            <span id="gazeStatusBadge" class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 text-[10px] font-semibold shrink-0">Camera Off</span>
           </div>
 
           <div id="cameraViewportBox" class="relative w-full h-32 rounded-xl bg-slate-900 border border-slate-800 overflow-hidden flex items-center justify-center cursor-pointer">
@@ -162,15 +163,19 @@
               </div>
               <div id="scanLine" class="hidden absolute left-4 right-4 h-0.5 bg-indigo-400/60 proctor-scan"></div>
             </div>
+
+            <span id="aiModelPill" class="pointer-events-none absolute bottom-1.5 left-2 px-1.5 py-0.5 rounded bg-slate-950/80 border border-slate-700/80 text-[9px] font-semibold text-slate-300">
+              🧠 AI Gaze: Initializing...
+            </span>
           </div>
 
           <div class="space-y-1">
             <div class="flex items-center justify-between text-[10px]">
-              <span class="text-slate-400">Sideways / Look-Away Limit:</span>
+              <span class="text-slate-400">Head Turn / Eye Gaze Limit:</span>
               <span id="lookAwayReadout" class="font-bold text-slate-200">0.0s / 4.0s</span>
             </div>
             <div class="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
-              <div id="lookAwayBar" class="h-full bg-emerald-400" style="width: 0%"></div>
+              <div id="lookAwayBar" class="h-full bg-emerald-400 transition-all duration-150" style="width: 0%"></div>
             </div>
           </div>
 
@@ -213,7 +218,7 @@
 
           <div class="py-2.5 rounded-xl bg-slate-900/80 border border-slate-800/80 text-center">
             <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-950 border border-slate-800 text-[10px] font-medium text-slate-300 mb-1">
-              <span id="statusDot" class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+              <span id="statusDot" class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
               <span id="statusText">Enable Camera to Unlock Timer</span>
             </div>
             <div id="timerDisplay" class="text-4xl font-extrabold tracking-tight text-white tabular-nums">45:00</div>
@@ -233,7 +238,7 @@
         <div class="rounded-2xl bg-slate-950 border border-amber-500/35 p-3 flex items-center justify-between gap-2">
           <div class="min-w-0">
             <p class="text-[11px] font-bold text-amber-300">🎲 16-Clip Zero-Latency Roast Roulette</p>
-            <p id="lastRandomClipLabel" class="text-[10px] text-slate-400 truncate">Pre-decoded in RAM • Auto-triggers on distraction</p>
+            <p id="lastRandomClipLabel" class="text-[10px] text-slate-400 truncate">Pre-decoded in RAM • Auto-triggers on sideways gaze</p>
           </div>
           <span class="px-2 py-1 rounded-lg bg-amber-500/15 border border-amber-500/35 text-amber-300 font-bold text-[10px] shrink-0">
             🔒 Auto-Only
@@ -286,10 +291,7 @@
               rows="5"
               class="w-full rounded-xl bg-slate-900 border border-slate-800 focus:border-indigo-500 focus:outline-none p-3 text-xs text-slate-100 leading-relaxed"
               placeholder="Write or paste your study notes here..."
-            >Chapter 3 Quick Revision Notes:
-1. Gibbs Phase Rule: F = C - P + 2
-2. Eutectic: Liquid -> Alpha + Beta
-3. Complete 10 numericals before the 5-min water break.</textarea>
+            ></textarea>
 
             <div class="rounded-xl bg-slate-900 border border-slate-800 p-3 space-y-2">
               <h3 class="text-[11px] font-bold uppercase tracking-wider text-indigo-300">Study Milestones (+15 Pts Each)</h3>
@@ -371,9 +373,14 @@
               <h2 class="text-xs font-bold text-white">🏆 Friends Focus League</h2>
               <p class="text-[10px] text-slate-400">+10/min, +15/task, -15/roast</p>
             </div>
-            <button id="copyReportCardBtn" type="button" class="px-2.5 py-1.5 rounded-xl bg-amber-500/20 active:bg-amber-500/35 border border-amber-500/40 text-amber-200 font-bold text-[10px] shrink-0">
-              📋 Report Card
-            </button>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <button id="refreshLeaderboardBtn" type="button" class="px-2 py-1.5 rounded-xl bg-indigo-500/20 active:bg-indigo-500/35 border border-indigo-500/40 text-indigo-200 font-bold text-[10px]">
+                🔄 Sync
+              </button>
+              <button id="copyReportCardBtn" type="button" class="px-2.5 py-1.5 rounded-xl bg-amber-500/20 active:bg-amber-500/35 border border-amber-500/40 text-amber-200 font-bold text-[10px]">
+                📋 Report
+              </button>
+            </div>
           </div>
 
           <div class="flex items-center gap-1.5">
@@ -395,6 +402,7 @@
               <tbody id="leaderboardBody" class="divide-y divide-slate-800/80 bg-slate-950"></tbody>
             </table>
           </div>
+          <p class="text-[10px] text-slate-500">Live squad members appear automatically once connected to your Google Drive Sheet.</p>
         </div>
 
         <!-- Google Drive Real-Time Database Connector -->
@@ -402,7 +410,7 @@
           <div class="flex items-center justify-between gap-2">
             <div>
               <h3 class="text-xs font-bold text-emerald-300">☁️ Google Drive Real-Time Database</h3>
-              <p class="text-[10px] text-slate-400">Syncs user scores &amp; distraction logs to your Google Sheet</p>
+              <p class="text-[10px] text-slate-400">Syncs Users &amp; Distraction_Logs to your Google Sheet</p>
             </div>
             <button id="exportCsvBtn" type="button" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 font-bold text-[10px]">
               ⬇ Export CSV
@@ -410,7 +418,7 @@
           </div>
 
           <div class="flex items-center gap-1.5">
-            <input id="driveWebhookInput" type="url" placeholder="Paste Google Apps Script Web App URL..." class="w-full rounded-xl bg-slate-900 border border-slate-800 px-2.5 py-1.5 text-[11px] text-white focus:outline-none" />
+            <input id="driveWebhookInput" type="url" placeholder="Paste Apps Script Web App URL (https://script.google.com/.../exec)" class="w-full rounded-xl bg-slate-900 border border-slate-800 px-2.5 py-1.5 text-[11px] text-white focus:outline-none" />
             <button id="saveWebhookBtn" type="button" class="px-3 py-1.5 rounded-xl bg-emerald-500 text-slate-950 font-bold text-[11px] shrink-0">
               Link DB
             </button>
@@ -418,10 +426,13 @@
 
           <div class="flex items-center justify-between gap-2 text-[10px]">
             <button id="copyAppsScriptBtn" type="button" class="text-indigo-300 underline font-semibold">
-              📋 Copy Apps Script Bridge Code
+              📋 Copy Updated Apps Script Code
             </button>
             <span id="dbQueueReadout" class="text-slate-400 font-mono">Synced: 0 events</span>
           </div>
+          <p id="dbStatusMessage" class="text-[10px] text-slate-400 leading-snug">
+            Deploy Apps Script as <strong>Web App</strong> → Execute as: <strong>Me</strong> → Who has access: <strong>Anyone</strong>, then paste the <code>/exec</code> URL above.
+          </p>
         </div>
 
         <!-- Activity Log -->
@@ -459,31 +470,56 @@
   </main>
 
   <!-- ==================== GOOGLE / EMAIL STUDENT LOGIN MODAL ==================== -->
-  <div id="loginModal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="w-full max-w-sm rounded-3xl bg-slate-900 border border-slate-700 p-5 shadow-2xl space-y-3.5">
+  <div id="loginModal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="w-full max-w-sm rounded-3xl bg-slate-900 border border-slate-700 p-5 shadow-2xl space-y-3.5 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between">
         <div>
-          <h2 class="text-sm font-bold text-white">Student Login — FocusGuard</h2>
+          <h2 class="text-sm font-bold text-white">Student Sign In — FocusGuard</h2>
           <p class="text-[11px] text-slate-400">Sync your Focus Score with your study squad</p>
         </div>
         <button id="closeLoginModalBtn" type="button" class="text-slate-400 hover:text-white text-sm font-bold">✕</button>
       </div>
 
-      <button id="googleQuickLoginBtn" type="button" class="w-full py-2.5 px-4 rounded-xl bg-white active:bg-slate-200 text-slate-900 font-bold text-xs flex items-center justify-center gap-2 shadow">
+      <button id="googleQuickLoginBtn" type="button" class="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-slate-100 active:bg-slate-200 text-slate-900 font-bold text-xs flex items-center justify-center gap-2 shadow">
         <span>🌐</span>
         <span>Continue with Google Account</span>
       </button>
 
+      <!-- Real Google OAuth Client ID Setup Panel -->
+      <div id="googleOAuthSetupBox" class="hidden rounded-2xl bg-slate-950 border border-indigo-500/40 p-3 space-y-2 text-[11px]">
+        <div class="flex items-center justify-between">
+          <p class="font-bold text-indigo-300">Google OAuth Client ID Setup</p>
+          <button id="closeOAuthSetupBtn" type="button" class="text-slate-400 text-xs font-bold">✕</button>
+        </div>
+        <p class="text-[10px] text-slate-300 leading-relaxed">
+          To redirect to the official Google login page on your live domain, create a free Web OAuth Client ID in <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener" class="text-indigo-300 underline">Google Cloud Console</a> and add your site origin below to <strong>Authorized JavaScript origins</strong> &amp; <strong>Authorized redirect URIs</strong>:
+        </p>
+        <div class="flex items-center gap-1.5">
+          <input id="currentOriginDisplay" type="text" readonly class="w-full rounded-lg bg-slate-900 border border-slate-800 px-2 py-1 text-[10px] font-mono text-emerald-300 focus:outline-none" />
+          <button id="copyOriginBtn" type="button" class="px-2 py-1 rounded-lg bg-slate-800 text-slate-200 font-bold text-[10px] shrink-0">Copy</button>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <input id="googleClientIdInput" type="text" placeholder="Paste xxxxx.apps.googleusercontent.com" class="w-full rounded-lg bg-slate-900 border border-slate-700 px-2.5 py-1.5 text-[10px] text-white focus:outline-none" />
+          <button id="saveGoogleClientIdBtn" type="button" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 text-white font-bold text-[10px] shrink-0">Save &amp; Sign In</button>
+        </div>
+      </div>
+
+      <div class="flex justify-end">
+        <button id="toggleOAuthConfigBtn" type="button" class="text-[10px] text-indigo-300 underline">
+          ⚙️ Configure Google OAuth Client ID
+        </button>
+      </div>
+
       <div class="relative flex py-0.5 items-center">
         <div class="flex-grow border-t border-slate-800"></div>
-        <span class="flex-shrink mx-3 text-[10px] text-slate-500 uppercase font-semibold">Or Email</span>
+        <span class="flex-shrink mx-3 text-[10px] text-slate-500 uppercase font-semibold">Or Sign In with Email</span>
         <div class="flex-grow border-t border-slate-800"></div>
       </div>
 
       <form id="emailLoginForm" class="space-y-2.5">
-        <input id="loginNameInput" type="text" value="Karthik (You)" placeholder="Your Name" required class="w-full rounded-xl bg-slate-950 border border-slate-800 px-3 py-2 text-xs text-white focus:outline-none" />
-        <input id="loginEmailInput" type="email" value="karthik.study@student.edu" placeholder="Student Email" required class="w-full rounded-xl bg-slate-950 border border-slate-800 px-3 py-2 text-xs text-white focus:outline-none" />
-        <input id="loginSquadCodeInput" type="text" value="NIT-Hostel-Squad" placeholder="Squad Code" class="w-full rounded-xl bg-slate-950 border border-slate-800 px-3 py-2 text-xs text-white focus:outline-none" />
+        <input id="loginNameInput" type="text" placeholder="Your Full Name" required class="w-full rounded-xl bg-slate-950 border border-slate-800 px-3 py-2 text-xs text-white focus:outline-none" />
+        <input id="loginEmailInput" type="email" placeholder="Your Email Address" required class="w-full rounded-xl bg-slate-950 border border-slate-800 px-3 py-2 text-xs text-white focus:outline-none" />
+        <input id="loginSquadCodeInput" type="text" placeholder="Squad Code (e.g. NIT-Hostel-Squad)" class="w-full rounded-xl bg-slate-950 border border-slate-800 px-3 py-2 text-xs text-white focus:outline-none" />
         <button type="submit" class="w-full py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs">
           Save &amp; Join Leaderboard
         </button>
@@ -495,6 +531,9 @@
     if (window.pdfjsLib) {
       window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
     }
+
+    // Optional: Paste your Google Cloud OAuth 2.0 Web Client ID here so all visitors can sign in with Google directly
+    const DEFAULT_GOOGLE_OAUTH_CLIENT_ID = '';
 
     // --- ALL 16 EMBEDDED TELUGU VOICE ALARM CLIPS ---
     const VOICE_CLIPS = {
@@ -524,7 +563,6 @@
     let activeBufferSource = null;
     let isAlarmLooping = false;
 
-    // Pre-create fallback HTML5 players immediately
     CLIP_KEYS.forEach((key) => {
       const a = new Audio(VOICE_CLIPS[key].src);
       a.preload = 'auto';
@@ -558,7 +596,6 @@
         badge.textContent = '⚡ Zero-Latency';
         badge.className = 'px-1.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-[9px] font-bold uppercase shrink-0';
 
-        // Decode all 16 clips into RAM AudioBuffers in the background for <5ms playback
         for (const key of CLIP_KEYS) {
           if (decodedBuffers[key]) continue;
           const src = VOICE_CLIPS[key].src;
@@ -574,7 +611,6 @@
       } catch (e) {}
     }
 
-    // Unlock audio engine on the very first touch or click anywhere
     document.addEventListener('pointerdown', unlockAndPredecodeAlarms, { once: true });
 
     let shuffleBag = [];
@@ -601,48 +637,43 @@
     let alertCount = 0;
     let secondsFocusedCounter = 0;
 
-    // Camera Proctor State
+    // AI Camera Proctor State (MediaPipe Face Landmarker + Gaze/Yaw)
     let cameraStream = null;
     let cameraCheckInterval = null;
     let lookAwaySeconds = 0;
     const LOOK_AWAY_LIMIT = 4.0;
-    let faceDetectorInstance = null;
-    if ('FaceDetector' in window) {
-      try {
-        faceDetectorInstance = new window.FaceDetector({ fastMode: true, maxDetectedFaces: 1 });
-      } catch (e) {
-        faceDetectorInstance = null;
-      }
-    }
+    let faceLandmarker = null;
+    let aiModelLoading = false;
+    let aiModelReady = false;
+    let lastVideoTime = -1;
+    let isAnalyzingFrame = false;
 
-    // Student Profile, Friends League & Drive DB Sync State
+    // Clean Student Profile & Real Leaderboard (Zero test/dummy names)
+    const LEGACY_TEST_EMAILS = new Set(['saiteja@student.edu', 'harsha@student.edu', 'pranav@student.edu']);
     const DEFAULT_USER = {
       name: 'You (Guest)',
-      email: 'guest@student.edu',
-      squad: 'NIT-Hostel-Squad',
-      focusedMins: 12,
+      email: 'guest@focusguard.app',
+      squad: 'My-Study-Squad',
+      focusedMins: 0,
       roasts: 0,
-      score: 120,
+      score: 0,
       isYou: true
     };
     let currentUser = { ...DEFAULT_USER };
-    let friendsList = [
-      currentUser,
-      { name: 'Sai Teja', email: 'saiteja@student.edu', squad: 'NIT-Hostel-Squad', focusedMins: 28, roasts: 1, score: 265, isYou: false },
-      { name: 'Harsha Vardhan', email: 'harsha@student.edu', squad: 'NIT-Hostel-Squad', focusedMins: 19, roasts: 2, score: 160, isYou: false },
-      { name: 'Pranav Reddy', email: 'pranav@student.edu', squad: 'NIT-Hostel-Squad', focusedMins: 15, roasts: 4, score: 90, isYou: false }
-    ];
+    let friendsList = [currentUser];
     let driveWebhookUrl = '';
+    let googleClientId = DEFAULT_GOOGLE_OAUTH_CLIENT_ID;
     let dbSyncedEvents = 0;
     const distractionHistory = [];
 
     function saveProgress() {
       try {
-        localStorage.setItem('focusguard_v5_state', JSON.stringify({
+        localStorage.setItem('focusguard_v6_state', JSON.stringify({
           currentUser,
-          friends: friendsList.filter((f) => !f.isYou),
+          friends: friendsList.filter((f) => !f.isYou && !LEGACY_TEST_EMAILS.has(String(f.email || '').toLowerCase())),
           notes: document.getElementById('studyNotesArea').value,
           driveWebhookUrl,
+          googleClientId,
           distractionHistory: distractionHistory.slice(0, 50)
         }));
       } catch (e) {}
@@ -650,15 +681,28 @@
 
     function loadProgress() {
       try {
-        const raw = localStorage.getItem('focusguard_v5_state');
+        const raw = localStorage.getItem('focusguard_v6_state') || localStorage.getItem('focusguard_v5_state');
         if (!raw) return;
         const parsed = JSON.parse(raw);
-        if (parsed.currentUser) Object.assign(currentUser, parsed.currentUser);
-        if (Array.isArray(parsed.friends)) friendsList = [currentUser, ...parsed.friends];
+        if (parsed.currentUser) {
+          // If migrating from v5 dummy default (You (Guest) with 12 mins / 120 pts), reset to clean 0
+          if (parsed.currentUser.email === 'guest@student.edu' && parsed.currentUser.focusedMins === 12 && parsed.currentUser.score === 120) {
+            Object.assign(currentUser, DEFAULT_USER);
+          } else {
+            Object.assign(currentUser, parsed.currentUser);
+          }
+        }
+        if (Array.isArray(parsed.friends)) {
+          const cleanFriends = parsed.friends.filter((f) => f && !f.isYou && !LEGACY_TEST_EMAILS.has(String(f.email || '').toLowerCase()));
+          friendsList = [currentUser, ...cleanFriends];
+        }
         if (typeof parsed.notes === 'string') document.getElementById('studyNotesArea').value = parsed.notes;
         if (typeof parsed.driveWebhookUrl === 'string') {
           driveWebhookUrl = parsed.driveWebhookUrl;
           document.getElementById('driveWebhookInput').value = driveWebhookUrl;
+        }
+        if (typeof parsed.googleClientId === 'string' && parsed.googleClientId.trim()) {
+          googleClientId = parsed.googleClientId.trim();
         }
         if (Array.isArray(parsed.distractionHistory)) {
           distractionHistory.push(...parsed.distractionHistory);
@@ -666,7 +710,7 @@
       } catch (e) {}
     }
 
-    function syncEventToDriveDB(eventType, triggerType, clipTitle, ptsDelta) {
+    async function syncEventToDriveDB(eventType, triggerType, clipTitle, ptsDelta) {
       const payload = {
         timestamp: new Date().toISOString(),
         studentName: currentUser.name,
@@ -682,19 +726,92 @@
         pointsDelta: ptsDelta || 0
       };
       distractionHistory.unshift(payload);
-      dbSyncedEvents += 1;
-      document.getElementById('dbQueueReadout').textContent = 'Saved: ' + dbSyncedEvents + ' events';
       saveProgress();
 
-      if (driveWebhookUrl && driveWebhookUrl.startsWith('https://')) {
-        document.getElementById('driveSyncPill').textContent = '☁️ Drive Synced';
-        document.getElementById('driveSyncPill').className = 'px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[10px] font-bold';
-        fetch(driveWebhookUrl, {
+      if (!driveWebhookUrl || !driveWebhookUrl.startsWith('https://')) {
+        document.getElementById('dbQueueReadout').textContent = 'Local: ' + distractionHistory.length + ' events';
+        return false;
+      }
+
+      const syncPill = document.getElementById('driveSyncPill');
+      const statusMsg = document.getElementById('dbStatusMessage');
+      syncPill.textContent = '⏳ Syncing...';
+      syncPill.className = 'px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[10px] font-bold';
+
+      try {
+        const res = await fetch(driveWebhookUrl, {
           method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
+          redirect: 'follow',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
-        }).catch(() => {});
+        });
+        const text = await res.text();
+        dbSyncedEvents += 1;
+        document.getElementById('dbQueueReadout').textContent = 'Synced: ' + dbSyncedEvents + ' events';
+        syncPill.textContent = '☁️ Drive Live';
+        syncPill.className = 'px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[10px] font-bold';
+        statusMsg.textContent = '✅ Sheet updated (' + eventType + ') at ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        return text.indexOf('error') === -1;
+      } catch (err) {
+        // Fallback no-cors POST if browser blocks reading Apps Script redirect response
+        try {
+          await fetch(driveWebhookUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+          });
+          dbSyncedEvents += 1;
+          document.getElementById('dbQueueReadout').textContent = 'Sent: ' + dbSyncedEvents + ' events';
+          syncPill.textContent = '☁️ Drive Sent';
+          syncPill.className = 'px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[10px] font-bold';
+          statusMsg.textContent = '☁️ Sent to Drive Sheet (' + eventType + '). Check your Users & Distraction_Logs tabs.';
+          return true;
+        } catch (err2) {
+          syncPill.textContent = '⚠️ Sync Error';
+          syncPill.className = 'px-2 py-0.5 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-300 text-[10px] font-bold';
+          statusMsg.textContent = '⚠️ Could not reach Drive Sheet URL. Ensure Apps Script is deployed as Web App with access set to Anyone.';
+          return false;
+        }
+      }
+    }
+
+    async function fetchLeaderboardFromDriveDB() {
+      if (!driveWebhookUrl || !driveWebhookUrl.startsWith('https://')) {
+        showNotice('Paste your Google Apps Script Web App URL in the Drive Database box below first to sync live squad rankings.');
+        return;
+      }
+      const statusMsg = document.getElementById('dbStatusMessage');
+      try {
+        const res = await fetch(driveWebhookUrl + (driveWebhookUrl.includes('?') ? '&' : '?') + 'action=leaderboard', {
+          method: 'GET',
+          redirect: 'follow'
+        });
+        const data = await res.json();
+        if (data && Array.isArray(data.users)) {
+          const remoteOthers = [];
+          data.users.forEach((u) => {
+            if (!u || !u.email) return;
+            const em = String(u.email).toLowerCase();
+            if (LEGACY_TEST_EMAILS.has(em)) return;
+            if (em === String(currentUser.email).toLowerCase()) return;
+            remoteOthers.push({
+              name: u.studentName || u.email.split('@')[0],
+              email: u.email,
+              squad: u.squad || currentUser.squad,
+              focusedMins: Number(u.focusedMins) || 0,
+              roasts: Number(u.roasts) || 0,
+              score: Number(u.score) || 0,
+              isYou: false
+            });
+          });
+          friendsList = [currentUser, ...remoteOthers];
+          saveProgress();
+          renderLeaderboard();
+          statusMsg.textContent = '✅ Pulled ' + (remoteOthers.length + 1) + ' live student record(s) from Google Sheet.';
+        }
+      } catch (e) {
+        statusMsg.textContent = '⚠️ Could not read leaderboard from Sheet. Re-deploy Apps Script with the updated code and access set to Anyone.';
       }
     }
 
@@ -745,6 +862,13 @@
     const closeLoginModalBtn = document.getElementById('closeLoginModalBtn');
     const loginModal = document.getElementById('loginModal');
     const googleQuickLoginBtn = document.getElementById('googleQuickLoginBtn');
+    const googleOAuthSetupBox = document.getElementById('googleOAuthSetupBox');
+    const closeOAuthSetupBtn = document.getElementById('closeOAuthSetupBtn');
+    const toggleOAuthConfigBtn = document.getElementById('toggleOAuthConfigBtn');
+    const currentOriginDisplay = document.getElementById('currentOriginDisplay');
+    const copyOriginBtn = document.getElementById('copyOriginBtn');
+    const googleClientIdInput = document.getElementById('googleClientIdInput');
+    const saveGoogleClientIdBtn = document.getElementById('saveGoogleClientIdBtn');
     const emailLoginForm = document.getElementById('emailLoginForm');
     const loginNameInput = document.getElementById('loginNameInput');
     const loginEmailInput = document.getElementById('loginEmailInput');
@@ -754,6 +878,7 @@
     const leaderboardBody = document.getElementById('leaderboardBody');
     const friendNameInput = document.getElementById('friendNameInput');
     const inviteFriendBtn = document.getElementById('inviteFriendBtn');
+    const refreshLeaderboardBtn = document.getElementById('refreshLeaderboardBtn');
     const copyReportCardBtn = document.getElementById('copyReportCardBtn');
 
     const driveWebhookInput = document.getElementById('driveWebhookInput');
@@ -785,6 +910,7 @@
     const faceFrameBox = document.getElementById('faceFrameBox');
     const cameraPlaceholderText = document.getElementById('cameraPlaceholderText');
     const scanLine = document.getElementById('scanLine');
+    const aiModelPill = document.getElementById('aiModelPill');
     const gazeStatusBadge = document.getElementById('gazeStatusBadge');
     const lookAwayReadout = document.getElementById('lookAwayReadout');
     const lookAwayBar = document.getElementById('lookAwayBar');
@@ -882,7 +1008,6 @@
         playRandomVoiceClip(true);
       };
 
-      // Priority 1: Zero-latency pre-decoded AudioBuffer (<5ms)
       if (audioCtx && decodedBuffers[chosenKey]) {
         try {
           const source = audioCtx.createBufferSource();
@@ -895,7 +1020,6 @@
         } catch (e) {}
       }
 
-      // Priority 2: Preloaded HTML5 Audio fallback
       const player = fallbackPlayers[chosenKey];
       player.currentTime = 0;
       player.onended = handleEnded;
@@ -1194,7 +1318,44 @@
     });
     closeViewerBtn.addEventListener('click', () => universalViewerContainer.classList.add('hidden'));
 
-    // --- PART 5: INTEGRATED LATEST CAMERA PERMISSION & GAZE PROCTOR ---
+    // --- PART 5: AI MEDIAPIPE FACE LANDMARKER (TRUE HEAD YAW + EYE GAZE PROCTOR) ---
+    async function initAiFaceLandmarker() {
+      if (faceLandmarker || aiModelLoading) return;
+      aiModelLoading = true;
+      aiModelPill.textContent = '🧠 Loading AI Gaze Model...';
+      try {
+        const visionMod = await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/+esm');
+        const { FilesetResolver, FaceLandmarker } = visionMod;
+        const filesetResolver = await FilesetResolver.forVisionTasks(
+          'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm'
+        );
+        const modelUrl = 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task';
+        try {
+          faceLandmarker = await FaceLandmarker.createFromOptions(filesetResolver, {
+            baseOptions: { modelAssetPath: modelUrl, delegate: 'GPU' },
+            runningMode: 'VIDEO',
+            numFaces: 1,
+            outputFaceBlendshapes: true
+          });
+        } catch (gpuErr) {
+          faceLandmarker = await FaceLandmarker.createFromOptions(filesetResolver, {
+            baseOptions: { modelAssetPath: modelUrl, delegate: 'CPU' },
+            runningMode: 'VIDEO',
+            numFaces: 1,
+            outputFaceBlendshapes: true
+          });
+        }
+        aiModelReady = true;
+        aiModelPill.textContent = '🧠 AI Head & Eye Gaze Active';
+        aiModelPill.className = 'pointer-events-none absolute bottom-1.5 left-2 px-1.5 py-0.5 rounded bg-emerald-950/90 border border-emerald-500/50 text-[9px] font-semibold text-emerald-300';
+      } catch (err) {
+        aiModelReady = false;
+        aiModelPill.textContent = '📷 Optical Fallback Mode';
+      } finally {
+        aiModelLoading = false;
+      }
+    }
+
     function isCameraArmed() {
       return Boolean(cameraStream && cameraStream.active);
     }
@@ -1213,69 +1374,116 @@
       const pct = Math.min(100, (lookAwaySeconds / LOOK_AWAY_LIMIT) * 100);
       lookAwayReadout.textContent = lookAwaySeconds.toFixed(1) + 's / ' + LOOK_AWAY_LIMIT.toFixed(1) + 's';
       lookAwayBar.style.width = pct + '%';
-      lookAwayBar.className = pct >= 80 ? 'h-full bg-red-500' : pct >= 40 ? 'h-full bg-amber-400' : 'h-full bg-emerald-400';
+      lookAwayBar.className = pct >= 80 ? 'h-full bg-red-500 transition-all duration-150' : pct >= 40 ? 'h-full bg-amber-400 transition-all duration-150' : 'h-full bg-emerald-400 transition-all duration-150';
     }
 
-    async function analyzeCameraFrame() {
-      if (isBreakMode || !isCameraArmed()) return;
-      let isLookingAway = false;
+    function analyzeCameraFrame() {
+      if (isBreakMode || !isCameraArmed() || isAnalyzingFrame) return;
+      if (webcamVideo.readyState < 2 || webcamVideo.videoWidth === 0) return;
 
-      if (webcamVideo.readyState >= 2) {
-        if (faceDetectorInstance) {
-          try {
-            const faces = await faceDetectorInstance.detect(webcamVideo);
-            if (!faces || faces.length === 0) {
+      isAnalyzingFrame = true;
+      let isLookingAway = false;
+      let distractionReason = 'Looking Sideways';
+
+      try {
+        if (aiModelReady && faceLandmarker) {
+          if (webcamVideo.currentTime !== lastVideoTime) {
+            lastVideoTime = webcamVideo.currentTime;
+            const results = faceLandmarker.detectForVideo(webcamVideo, performance.now());
+
+            if (!results || !results.faceLandmarks || results.faceLandmarks.length === 0) {
               isLookingAway = true;
+              distractionReason = 'No Face Detected';
             } else {
-              const box = faces[0].boundingBox;
-              const vw = webcamVideo.videoWidth || 320;
-              const vh = webcamVideo.videoHeight || 240;
-              const cx = (box.x + box.width / 2) / vw;
-              const cy = (box.y + box.height / 2) / vh;
-              if (cx < 0.22 || cx > 0.78 || cy < 0.15 || cy > 0.85) {
+              const lm = results.faceLandmarks[0];
+              // Key 3D face landmarks: 1=nose tip, 234=left cheek edge, 454=right cheek edge, 10=forehead, 152=chin
+              const nose = lm[1];
+              const leftCheek = lm[234];
+              const rightCheek = lm[454];
+              const forehead = lm[10];
+              const chin = lm[152];
+
+              const distLeft = Math.abs(nose.x - leftCheek.x);
+              const distRight = Math.abs(rightCheek.x - nose.x);
+              const faceWidth = Math.max(0.001, distLeft + distRight);
+              const yawAsymmetry = Math.abs(distLeft - distRight) / faceWidth;
+
+              const faceHeight = Math.max(0.001, Math.abs(chin.y - forehead.y));
+              const pitchRatio = (nose.y - forehead.y) / faceHeight;
+
+              // Check eye gaze blendshapes for glancing sideways even with head straight
+              let eyeSidewaysScore = 0;
+              if (results.faceBlendshapes && results.faceBlendshapes[0] && results.faceBlendshapes[0].categories) {
+                const cats = {};
+                results.faceBlendshapes[0].categories.forEach((c) => { cats[c.categoryName] = c.score; });
+                const glanceLeft = ((cats.eyeLookOutLeft || 0) + (cats.eyeLookInRight || 0)) / 2;
+                const glanceRight = ((cats.eyeLookOutRight || 0) + (cats.eyeLookInLeft || 0)) / 2;
+                eyeSidewaysScore = Math.max(glanceLeft, glanceRight);
+              }
+
+              if (yawAsymmetry > 0.27) {
                 isLookingAway = true;
+                distractionReason = 'Head Turned Sideways';
+              } else if (eyeSidewaysScore > 0.52) {
+                isLookingAway = true;
+                distractionReason = 'Eyes Glancing Sideways';
+              } else if (pitchRatio < 0.28 || pitchRatio > 0.78) {
+                isLookingAway = true;
+                distractionReason = 'Looking Up/Down Away';
+              } else if (nose.x < 0.18 || nose.x > 0.82) {
+                isLookingAway = true;
+                distractionReason = 'Face Out of Frame';
               }
             }
-          } catch (e) {
-            faceDetectorInstance = null;
           }
-        }
-
-        if (!faceDetectorInstance) {
+        } else {
+          // Fallback if MediaPipe model hasn't finished loading yet
           const ctx = proctorCanvas.getContext('2d', { willReadFrequently: true });
           ctx.drawImage(webcamVideo, 0, 0, 160, 120);
           const frame = ctx.getImageData(0, 0, 160, 120).data;
 
-          let centerScore = 0, centerPixels = 0;
-          for (let y = 30; y < 95; y += 2) {
-            for (let x = 45; x < 115; x += 2) {
+          let leftSkin = 0, rightSkin = 0, totalPx = 0;
+          for (let y = 28; y < 96; y += 2) {
+            for (let x = 40; x < 120; x += 2) {
               const idx = (y * 160 + x) * 4;
               const r = frame[idx], g = frame[idx + 1], b = frame[idx + 2];
-              if (r > 45 && g > 30 && b > 20 && r > b && Math.abs(r - g) < 90) centerScore += 1;
-              centerPixels += 1;
+              const isSkin = (r > 45 && g > 30 && b > 20 && r > b && Math.abs(r - g) < 90);
+              if (isSkin) {
+                if (x < 80) leftSkin += 1;
+                else rightSkin += 1;
+              }
+              totalPx += 1;
             }
           }
-          if ((centerScore / Math.max(1, centerPixels)) < 0.14) isLookingAway = true;
+          const totalSkin = leftSkin + rightSkin;
+          const skinRatio = totalSkin / Math.max(1, totalPx);
+          const lrBalance = Math.abs(leftSkin - rightSkin) / Math.max(1, totalSkin);
+          if (skinRatio < 0.14 || lrBalance > 0.45) {
+            isLookingAway = true;
+            distractionReason = skinRatio < 0.14 ? 'Camera Blocked / Away' : 'Turned Sideways';
+          }
         }
-      }
+      } catch (e) {}
 
       if (isLookingAway) {
-        lookAwaySeconds = Math.min(LOOK_AWAY_LIMIT, +(lookAwaySeconds + 0.5).toFixed(1));
+        lookAwaySeconds = Math.min(LOOK_AWAY_LIMIT, +(lookAwaySeconds + 0.4).toFixed(1));
         faceFrameBox.className = 'w-24 h-20 rounded-2xl border-2 border-red-500 flex items-center justify-center px-2';
-        gazeStatusBadge.textContent = '⚠️ Looking Sideways';
-        gazeStatusBadge.className = 'px-2 py-0.5 rounded-md bg-red-500/25 text-red-300 text-[10px] font-semibold';
+        gazeStatusBadge.textContent = '⚠️ ' + distractionReason;
+        gazeStatusBadge.className = 'px-2 py-0.5 rounded-md bg-red-500/25 text-red-300 text-[10px] font-semibold shrink-0';
 
         if (lookAwaySeconds >= LOOK_AWAY_LIMIT && warningBanner.classList.contains('hidden')) {
           const goal = goalInput.value.trim() || 'your study material';
-          triggerWarningAlert('Camera Proctor caught you looking sideways! Eyes back on "' + goal + '"!', 'Camera Proctor');
+          triggerWarningAlert('AI Proctor: ' + distractionReason + '! Eyes back on "' + goal + '"!', 'AI Camera (' + distractionReason + ')');
         }
       } else {
-        lookAwaySeconds = Math.max(0, +(lookAwaySeconds - 0.5).toFixed(1));
+        lookAwaySeconds = Math.max(0, +(lookAwaySeconds - 0.6).toFixed(1));
         faceFrameBox.className = 'w-24 h-20 rounded-2xl border-2 border-emerald-400/80 flex items-center justify-center px-2';
-        gazeStatusBadge.textContent = '✅ Eyes Focused';
-        gazeStatusBadge.className = 'px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-[10px] font-semibold';
+        gazeStatusBadge.textContent = aiModelReady ? '✅ Eyes Focused (AI)' : '✅ Eyes Focused';
+        gazeStatusBadge.className = 'px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-[10px] font-semibold shrink-0';
       }
+
       updateGazeBar();
+      isAnalyzingFrame = false;
     }
 
     async function obtainBrowserCameraStream() {
@@ -1300,6 +1508,7 @@
 
     async function requestMandatoryCamera(silentOnLoad) {
       if (isCameraArmed()) return true;
+      initAiFaceLandmarker();
       try {
         cameraStream = await obtainBrowserCameraStream();
         webcamVideo.srcObject = cameraStream;
@@ -1319,10 +1528,10 @@
         cameraPlaceholderText.classList.add('hidden');
         toggleCameraBtn.textContent = '⏹ Turn Cam Off';
         enableCamAndStartBtn.textContent = '🚀 Start Focusing';
-        gazeStatusBadge.textContent = '✅ Eyes Focused';
-        gazeStatusBadge.className = 'px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-[10px] font-semibold';
+        gazeStatusBadge.textContent = aiModelReady ? '✅ Eyes Focused (AI)' : '✅ Eyes Focused';
+        gazeStatusBadge.className = 'px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-[10px] font-semibold shrink-0';
         if (cameraCheckInterval) clearInterval(cameraCheckInterval);
-        cameraCheckInterval = setInterval(analyzeCameraFrame, 500);
+        cameraCheckInterval = setInterval(analyzeCameraFrame, 400);
         updateCameraMandateUI();
         inlineNoticeBanner.classList.add('hidden');
         updateUI();
@@ -1330,7 +1539,7 @@
       } catch (err) {
         if (!silentOnLoad) {
           const reason = err && err.name ? ' (' + err.name + ')' : '';
-          showNotice('Camera permission is required to start focusing' + reason + '. Please click "Allow" on your browser camera prompt (or tap the address-bar lock icon to allow camera access).');
+          showNotice('Camera permission is required to start focusing' + reason + '. Please click "Allow" on your browser camera prompt.');
         }
         updateCameraMandateUI();
         updateUI();
@@ -1355,7 +1564,7 @@
       toggleCameraBtn.textContent = '📷 Enable Camera';
       enableCamAndStartBtn.textContent = '🚀 Enable Cam & Focus';
       gazeStatusBadge.textContent = 'Camera Off';
-      gazeStatusBadge.className = 'px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 text-[10px] font-semibold';
+      gazeStatusBadge.className = 'px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 text-[10px] font-semibold shrink-0';
       if (isRunning && !isBreakMode) {
         clearInterval(timerInterval);
         timerInterval = null;
@@ -1391,7 +1600,7 @@
         startPauseBtn.textContent = 'Pause Session';
         startPauseBtn.className = 'w-full py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs shadow-lg';
         statusDot.className = 'w-1.5 h-1.5 rounded-full bg-indigo-400 animate-ping';
-        statusText.textContent = 'Proctor Watching — Focus!';
+        statusText.textContent = 'AI Proctor Watching — Focus!';
       } else {
         startPauseBtn.textContent = remainingSeconds < selectedMinutes * 60 && remainingSeconds > 0 ? 'Resume Session' : 'Start Focus Session';
         startPauseBtn.className = 'w-full py-2.5 rounded-xl bg-indigo-600 active:bg-indigo-500 text-white font-bold text-xs shadow-lg shadow-indigo-600/25';
@@ -1614,7 +1823,7 @@
       bindMilestoneCheckboxes();
     });
 
-    // Leaderboard, Login & Drive DB Bridge
+    // --- PART 7: REAL GOOGLE OAUTH LOGIN, CLEAN LEADERBOARD & DRIVE DB BRIDGE ---
     function renderLeaderboard() {
       const sorted = [...friendsList].sort((a, b) => b.score - a.score);
       leaderboardBody.innerHTML = '';
@@ -1634,54 +1843,226 @@
       headerRoastCount.textContent = String(currentUser.roasts);
     }
 
-    openLoginModalBtn.addEventListener('click', () => loginModal.classList.remove('hidden'));
-    closeLoginModalBtn.addEventListener('click', () => loginModal.classList.add('hidden'));
-
     function applyStudentLogin(name, email, squad) {
-      currentUser.name = name; currentUser.email = email; currentUser.squad = squad || 'Study-Squad';
+      currentUser.name = name;
+      currentUser.email = email;
+      currentUser.squad = squad || currentUser.squad || 'My-Study-Squad';
       userAvatarBadge.textContent = name.trim().charAt(0).toUpperCase() || 'S';
       userAccountLabel.textContent = name;
       loginModal.classList.add('hidden');
+      saveProgress();
       syncEventToDriveDB('User_Login', 'Auth', '', 0);
       renderLeaderboard();
+      showNotice('Signed in as ' + name + ' (' + email + ').');
     }
 
-    googleQuickLoginBtn.addEventListener('click', () => applyStudentLogin(loginNameInput.value.trim() || 'Karthik', loginEmailInput.value.trim() || 'karthik@gmail.com', loginSquadCodeInput.value.trim() || 'NIT-Hostel-Squad'));
+    async function fetchGoogleProfileFromToken(accessToken) {
+      try {
+        const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: 'Bearer ' + accessToken }
+        });
+        if (!res.ok) throw new Error('Profile fetch failed');
+        const profile = await res.json();
+        applyStudentLogin(
+          profile.name || profile.given_name || 'Google Student',
+          profile.email || 'student@gmail.com',
+          loginSquadCodeInput.value.trim() || currentUser.squad
+        );
+      } catch (err) {
+        showNotice('Signed in with Google, but could not load profile details. Please try again.');
+      }
+    }
+
+    function launchRealGoogleSignIn() {
+      const clientId = (googleClientIdInput.value.trim() || googleClientId || '').trim();
+      if (!clientId) {
+        currentOriginDisplay.value = window.location.origin;
+        googleOAuthSetupBox.classList.remove('hidden');
+        return;
+      }
+      googleClientId = clientId;
+      saveProgress();
+
+      // Priority 1: Official Google Identity Services Popup
+      if (window.google && window.google.accounts && window.google.accounts.oauth2) {
+        try {
+          const tokenClient = window.google.accounts.oauth2.initTokenClient({
+            client_id: clientId,
+            scope: 'openid email profile',
+            callback: (tokenResponse) => {
+              if (tokenResponse && tokenResponse.access_token) {
+                fetchGoogleProfileFromToken(tokenResponse.access_token);
+              }
+            }
+          });
+          tokenClient.requestAccessToken({ prompt: 'select_account' });
+          return;
+        } catch (e) {}
+      }
+
+      // Priority 2: Direct Redirect to Official Google OAuth 2.0 Login Page
+      const redirectUri = window.location.origin + window.location.pathname;
+      const oauthUrl = 'https://accounts.google.com/o/oauth2/v2/auth'
+        + '?client_id=' + encodeURIComponent(clientId)
+        + '&redirect_uri=' + encodeURIComponent(redirectUri)
+        + '&response_type=token'
+        + '&scope=' + encodeURIComponent('openid email profile')
+        + '&prompt=select_account';
+      window.location.href = oauthUrl;
+    }
+
+    function checkOAuthRedirectCallback() {
+      if (window.location.hash && window.location.hash.includes('access_token=')) {
+        const params = new URLSearchParams(window.location.hash.slice(1));
+        const token = params.get('access_token');
+        if (token) {
+          try { window.history.replaceState({}, document.title, window.location.pathname); } catch (e) {}
+          fetchGoogleProfileFromToken(token);
+        }
+      }
+    }
+
+    openLoginModalBtn.addEventListener('click', () => {
+      currentOriginDisplay.value = window.location.origin;
+      googleClientIdInput.value = googleClientId || '';
+      loginModal.classList.remove('hidden');
+    });
+    closeLoginModalBtn.addEventListener('click', () => loginModal.classList.add('hidden'));
+    closeOAuthSetupBtn.addEventListener('click', () => googleOAuthSetupBox.classList.add('hidden'));
+    toggleOAuthConfigBtn.addEventListener('click', () => {
+      currentOriginDisplay.value = window.location.origin;
+      googleClientIdInput.value = googleClientId || '';
+      googleOAuthSetupBox.classList.toggle('hidden');
+    });
+    copyOriginBtn.addEventListener('click', () => {
+      const origin = window.location.origin;
+      try { navigator.clipboard.writeText(origin); } catch (e) {
+        const ta = document.createElement('textarea'); ta.value = origin; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+      }
+      copyOriginBtn.textContent = 'Copied!';
+      setTimeout(() => { copyOriginBtn.textContent = 'Copy'; }, 1500);
+    });
+    saveGoogleClientIdBtn.addEventListener('click', () => {
+      const val = googleClientIdInput.value.trim();
+      if (!val.endsWith('.apps.googleusercontent.com')) {
+        showNotice('Please enter a valid Google OAuth Client ID ending in .apps.googleusercontent.com');
+        return;
+      }
+      googleClientId = val;
+      saveProgress();
+      googleOAuthSetupBox.classList.add('hidden');
+      launchRealGoogleSignIn();
+    });
+
+    googleQuickLoginBtn.addEventListener('click', launchRealGoogleSignIn);
+
     emailLoginForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      applyStudentLogin(loginNameInput.value.trim() || 'Student', loginEmailInput.value.trim() || 'student@college.edu', loginSquadCodeInput.value.trim() || 'NIT-Hostel-Squad');
+      const name = loginNameInput.value.trim();
+      const email = loginEmailInput.value.trim();
+      const squad = loginSquadCodeInput.value.trim() || 'My-Study-Squad';
+      if (!name || !email) return;
+      applyStudentLogin(name, email, squad);
     });
 
     inviteFriendBtn.addEventListener('click', () => {
       const raw = friendNameInput.value.trim();
       if (!raw) return;
       const cleanName = raw.includes('@') ? raw.split('@')[0] : raw;
+      const cleanEmail = raw.includes('@') ? raw : cleanName.toLowerCase().replace(/\s+/g, '.') + '@student.edu';
       friendsList.push({
-        name: cleanName, email: raw.includes('@') ? raw : cleanName.toLowerCase() + '@student.edu',
-        squad: currentUser.squad, focusedMins: Math.floor(Math.random() * 15) + 5, roasts: Math.floor(Math.random() * 3), score: 110, isYou: false
+        name: cleanName,
+        email: cleanEmail,
+        squad: currentUser.squad,
+        focusedMins: 0,
+        roasts: 0,
+        score: 0,
+        isYou: false
       });
       friendNameInput.value = '';
       saveProgress();
       renderLeaderboard();
     });
 
-    saveWebhookBtn.addEventListener('click', () => {
+    refreshLeaderboardBtn.addEventListener('click', async () => {
+      await syncEventToDriveDB('Manual_Sync', 'Sync', '', 0);
+      await fetchLeaderboardFromDriveDB();
+    });
+
+    saveWebhookBtn.addEventListener('click', async () => {
       driveWebhookUrl = driveWebhookInput.value.trim();
       saveProgress();
       if (driveWebhookUrl.startsWith('https://')) {
-        syncEventToDriveDB('DB_Connected', 'Webhook', '', 0);
-        showNotice('Google Drive Sheet linked! Real-time focus events will now stream to your Drive database.');
+        const ok = await syncEventToDriveDB('DB_Connected', 'Webhook', '', 0);
+        if (ok) {
+          showNotice('Google Drive Sheet connected! Users and Distraction_Logs will now update in real time.');
+          fetchLeaderboardFromDriveDB();
+        }
       } else {
-        showNotice('Please enter a valid https:// Google Apps Script Web App URL.');
+        showNotice('Please enter a valid https:// Google Apps Script Web App URL ending in /exec.');
       }
     });
 
     copyAppsScriptBtn.addEventListener('click', () => {
-      const script = `function doPost(e) {\n  var ss = SpreadsheetApp.getActiveSpreadsheet();\n  var data = JSON.parse(e.postData.contents);\n  var logs = ss.getSheetByName("Distraction_Logs");\n  logs.appendRow([data.timestamp, data.email, data.studyGoal, data.triggerType, data.clipTitle, data.pointsDelta]);\n  return ContentService.createTextOutput("OK");\n}`;
+      const script = [
+        'function getOrCreateSheet(ss, name, headers) {',
+        '  var sheet = ss.getSheetByName(name);',
+        '  if (!sheet) {',
+        '    sheet = ss.insertSheet(name);',
+        '    sheet.appendRow(headers);',
+        '  }',
+        '  return sheet;',
+        '}',
+        '',
+        'function doPost(e) {',
+        '  try {',
+        '    var ss = SpreadsheetApp.getActiveSpreadsheet();',
+        '    var data = JSON.parse(e.postData.contents);',
+        '    var users = getOrCreateSheet(ss, "Users", ["Student_Name", "Email", "Squad_Code", "Focused_Minutes", "Roasts_Triggered", "Focus_Score", "Last_Updated"]);',
+        '    var logs = getOrCreateSheet(ss, "Distraction_Logs", ["Timestamp", "Email", "Study_Goal", "Trigger_Type", "Telugu_Clip_Fired", "Points_Delta"]);',
+        '',
+        '    // 1. Upsert student row in Users tab',
+        '    var rows = users.getDataRange().getValues();',
+        '    var foundRow = -1;',
+        '    for (var i = 1; i < rows.length; i++) {',
+        '      if (String(rows[i][1]).toLowerCase() === String(data.email || "").toLowerCase()) {',
+        '        foundRow = i + 1;',
+        '        break;',
+        '      }',
+        '    }',
+        '    var userRow = [data.studentName || "Student", data.email || "", data.squad || "", Number(data.focusedMins) || 0, Number(data.roasts) || 0, Number(data.score) || 0, new Date().toISOString()];',
+        '    if (foundRow > 0) {',
+        '      users.getRange(foundRow, 1, 1, 7).setValues([userRow]);',
+        '    } else {',
+        '      users.appendRow(userRow);',
+        '    }',
+        '',
+        '    // 2. Append event row in Distraction_Logs tab',
+        '    logs.appendRow([data.timestamp || new Date().toISOString(), data.email || "", data.studyGoal || "", data.triggerType || data.eventType || "", data.clipTitle || "", Number(data.pointsDelta) || 0]);',
+        '',
+        '    return ContentService.createTextOutput(JSON.stringify({ status: "ok" })).setMimeType(ContentService.MimeType.JSON);',
+        '  } catch (err) {',
+        '    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: String(err) })).setMimeType(ContentService.MimeType.JSON);',
+        '  }',
+        '}',
+        '',
+        'function doGet(e) {',
+        '  var ss = SpreadsheetApp.getActiveSpreadsheet();',
+        '  var users = getOrCreateSheet(ss, "Users", ["Student_Name", "Email", "Squad_Code", "Focused_Minutes", "Roasts_Triggered", "Focus_Score", "Last_Updated"]);',
+        '  var rows = users.getDataRange().getValues();',
+        '  var list = [];',
+        '  for (var i = 1; i < rows.length; i++) {',
+        '    if (!rows[i][1]) continue;',
+        '    list.push({ studentName: rows[i][0], email: rows[i][1], squad: rows[i][2], focusedMins: rows[i][3], roasts: rows[i][4], score: rows[i][5], lastUpdated: rows[i][6] });',
+        '  }',
+        '  return ContentService.createTextOutput(JSON.stringify({ status: "ok", users: list })).setMimeType(ContentService.MimeType.JSON);',
+        '}'
+      ].join('\n');
+
       try { navigator.clipboard.writeText(script); } catch (e) {
         const ta = document.createElement('textarea'); ta.value = script; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
       }
-      showNotice('Apps Script code copied! Open your Google Sheet -> Extensions -> Apps Script, paste, and Deploy as Web App.');
+      showNotice('Updated Apps Script copied! Paste it into your Sheet → Extensions → Apps Script, click Deploy → New deployment → Web App (Execute as: Me, Who has access: Anyone), and paste the /exec URL into Link DB.');
     });
 
     exportCsvBtn.addEventListener('click', () => {
@@ -1707,6 +2088,7 @@
 
     // Boot
     loadProgress();
+    checkOAuthRedirectCallback();
     userAvatarBadge.textContent = currentUser.name.trim().charAt(0).toUpperCase() || 'G';
     userAccountLabel.textContent = currentUser.name;
     if (driveWebhookUrl) {
@@ -1716,8 +2098,9 @@
     updateCameraMandateUI();
     updateUI();
 
-    // Automatically request camera permission when opened in browser
+    // Automatically request camera permission & start loading AI Face Landmarker on load
     window.addEventListener('DOMContentLoaded', () => {
+      initAiFaceLandmarker();
       requestMandatoryCamera(true);
     });
   </script>
