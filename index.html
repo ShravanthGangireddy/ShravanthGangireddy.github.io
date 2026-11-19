@@ -485,31 +485,6 @@
         <span>Continue with Google Account</span>
       </button>
 
-      <!-- Real Google OAuth Client ID Setup Panel -->
-      <div id="googleOAuthSetupBox" class="hidden rounded-2xl bg-slate-950 border border-indigo-500/40 p-3 space-y-2 text-[11px]">
-        <div class="flex items-center justify-between">
-          <p class="font-bold text-indigo-300">Google OAuth Client ID Setup</p>
-          <button id="closeOAuthSetupBtn" type="button" class="text-slate-400 text-xs font-bold">✕</button>
-        </div>
-        <p class="text-[10px] text-slate-300 leading-relaxed">
-          To redirect to the official Google login page on your live domain, create a free Web OAuth Client ID in <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener" class="text-indigo-300 underline">Google Cloud Console</a> and add your site origin below to <strong>Authorized JavaScript origins</strong> &amp; <strong>Authorized redirect URIs</strong>:
-        </p>
-        <div class="flex items-center gap-1.5">
-          <input id="currentOriginDisplay" type="text" readonly class="w-full rounded-lg bg-slate-900 border border-slate-800 px-2 py-1 text-[10px] font-mono text-emerald-300 focus:outline-none" />
-          <button id="copyOriginBtn" type="button" class="px-2 py-1 rounded-lg bg-slate-800 text-slate-200 font-bold text-[10px] shrink-0">Copy</button>
-        </div>
-        <div class="flex items-center gap-1.5">
-          <input id="googleClientIdInput" type="text" placeholder="Paste xxxxx.apps.googleusercontent.com" class="w-full rounded-lg bg-slate-900 border border-slate-700 px-2.5 py-1.5 text-[10px] text-white focus:outline-none" />
-          <button id="saveGoogleClientIdBtn" type="button" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 text-white font-bold text-[10px] shrink-0">Save &amp; Sign In</button>
-        </div>
-      </div>
-
-      <div class="flex justify-end">
-        <button id="toggleOAuthConfigBtn" type="button" class="text-[10px] text-indigo-300 underline">
-          ⚙️ Configure Google OAuth Client ID
-        </button>
-      </div>
-
       <div class="relative flex py-0.5 items-center">
         <div class="flex-grow border-t border-slate-800"></div>
         <span class="flex-shrink mx-3 text-[10px] text-slate-500 uppercase font-semibold">Or Sign In with Email</span>
@@ -533,7 +508,7 @@
     }
 
     // Optional: Paste your Google Cloud OAuth 2.0 Web Client ID here so all visitors can sign in with Google directly
-    const DEFAULT_GOOGLE_OAUTH_CLIENT_ID = '';
+    const DEFAULT_GOOGLE_OAUTH_CLIENT_ID = '346838765302-lit6mgg8022rr7dm8hm5crj5md55t95v.apps.googleusercontent.com';
 
     // --- ALL 16 EMBEDDED TELUGU VOICE ALARM CLIPS ---
     const VOICE_CLIPS = {
@@ -920,13 +895,6 @@
     const closeLoginModalBtn = document.getElementById('closeLoginModalBtn');
     const loginModal = document.getElementById('loginModal');
     const googleQuickLoginBtn = document.getElementById('googleQuickLoginBtn');
-    const googleOAuthSetupBox = document.getElementById('googleOAuthSetupBox');
-    const closeOAuthSetupBtn = document.getElementById('closeOAuthSetupBtn');
-    const toggleOAuthConfigBtn = document.getElementById('toggleOAuthConfigBtn');
-    const currentOriginDisplay = document.getElementById('currentOriginDisplay');
-    const copyOriginBtn = document.getElementById('copyOriginBtn');
-    const googleClientIdInput = document.getElementById('googleClientIdInput');
-    const saveGoogleClientIdBtn = document.getElementById('saveGoogleClientIdBtn');
     const emailLoginForm = document.getElementById('emailLoginForm');
     const loginNameInput = document.getElementById('loginNameInput');
     const loginEmailInput = document.getElementById('loginEmailInput');
@@ -1943,14 +1911,7 @@
     }
 
     function launchRealGoogleSignIn() {
-      const clientId = (googleClientIdInput.value.trim() || googleClientId || '').trim();
-      if (!clientId) {
-        currentOriginDisplay.value = window.location.origin;
-        googleOAuthSetupBox.classList.remove('hidden');
-        return;
-      }
-      googleClientId = clientId;
-      saveProgress();
+      const clientId = DEFAULT_GOOGLE_OAUTH_CLIENT_ID;
 
       // Priority 1: Official Google Identity Services Popup
       if (window.google && window.google.accounts && window.google.accounts.oauth2) {
@@ -1991,37 +1952,8 @@
       }
     }
 
-    openLoginModalBtn.addEventListener('click', () => {
-      currentOriginDisplay.value = window.location.origin;
-      googleClientIdInput.value = googleClientId || '';
-      loginModal.classList.remove('hidden');
-    });
+    openLoginModalBtn.addEventListener('click', () => loginModal.classList.remove('hidden'));
     closeLoginModalBtn.addEventListener('click', () => loginModal.classList.add('hidden'));
-    closeOAuthSetupBtn.addEventListener('click', () => googleOAuthSetupBox.classList.add('hidden'));
-    toggleOAuthConfigBtn.addEventListener('click', () => {
-      currentOriginDisplay.value = window.location.origin;
-      googleClientIdInput.value = googleClientId || '';
-      googleOAuthSetupBox.classList.toggle('hidden');
-    });
-    copyOriginBtn.addEventListener('click', () => {
-      const origin = window.location.origin;
-      try { navigator.clipboard.writeText(origin); } catch (e) {
-        const ta = document.createElement('textarea'); ta.value = origin; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-      }
-      copyOriginBtn.textContent = 'Copied!';
-      setTimeout(() => { copyOriginBtn.textContent = 'Copy'; }, 1500);
-    });
-    saveGoogleClientIdBtn.addEventListener('click', () => {
-      const val = googleClientIdInput.value.trim();
-      if (!val.endsWith('.apps.googleusercontent.com')) {
-        showNotice('Please enter a valid Google OAuth Client ID ending in .apps.googleusercontent.com');
-        return;
-      }
-      googleClientId = val;
-      saveProgress();
-      googleOAuthSetupBox.classList.add('hidden');
-      launchRealGoogleSignIn();
-    });
 
     googleQuickLoginBtn.addEventListener('click', launchRealGoogleSignIn);
 
